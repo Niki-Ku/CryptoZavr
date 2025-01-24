@@ -1,50 +1,46 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
-  theme: {
-    extend: {
-      colors: {
-        charcoal: "#08090A",
-        lightblack: "#1C1C1C",
-        secondary: "#E6E6E6",
-        muted: "var(--neutral-200)",
-      },
-      boxShadow: {
-        derek: `0px 0px 0px 1px rgb(0 0 0 / 0.06),
-        0px 1px 1px -0.5px rgb(0 0 0 / 0.06),
-        0px 3px 3px -1.5px rgb(0 0 0 / 0.06), 
-        0px 6px 6px -3px rgb(0 0 0 / 0.06),
-        0px 12px 12px -6px rgb(0 0 0 / 0.06),
-        0px 24px 24px -12px rgb(0 0 0 / 0.06)`,
-        aceternity: `0px 2px 3px -1px rgba(0,0,0,0.1), 0px 1px 0px 0px rgba(25,28,33,0.02), 0px 0px 0px 1px rgba(25,28,33,0.08)`,
-      },
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
-      animation: {
-        move: "move 5s linear infinite",
-        "spin-circle": "spin-circle 3s linear infinite",
-      },
-      keyframes: {
-        move: {
-          "0%": { transform: "translateX(-200px)" },
-          "100%": { transform: "translateX(200px)" },
-        },
-        "spin-circle": {
-          "0%": { transform: "rotate(0deg)" },
-          "100%": { transform: "rotate(360deg)" },
-        },
-      },
-    },
-  },
-  plugins: [],
+	content: [
+		"./pages/**/*.{js,ts,jsx,tsx,mdx}",
+		"./components/**/*.{js,ts,jsx,tsx,mdx}",
+		"./app/**/*.{js,ts,jsx,tsx,mdx}",
+	],
+	theme: {
+		extend: {
+			colors: {
+				/* 
+          REMOVE IN THE END!
+          Background: bg-background-main or bg-background-component
+          Text: text-text-primary or text-text-secondary
+          Buttons/Links: bg-accent-primary, hover:bg-accent-hover, active:bg-accent-clicked
+          Status: text-feedback-success, text-feedback-warning, text-feedback-error
+         */
+				background: {
+					main: "#F2F6FA", // Main background
+					component: "#E3EDF4", // Component background
+				},
+				text: {
+					primary: "#1C2B36", // Primary text
+					secondary: "#4A6073", // Secondary text
+				},
+				accent: {
+					primary: "#1e587c", // Base color for buttons/links
+					hover: "#2D6D96", // Hover state
+					clicked: "#17425C", // Clicked state
+				},
+				complementary: {
+					coral: "#DA6851", // Secondary accent
+				},
+				feedback: {
+					success: "#2F8F65", // Success
+					warning: "#F4A259", // Warning
+					error: "#D9534F", // Error
+				},
+			},
+		},
+	},
+	plugins: [],
 };
 
 export default config;
