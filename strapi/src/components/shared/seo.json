@@ -14,6 +14,7 @@
     "metaDescription": {
       "type": "string",
       "required": true,
+      "maxLength": 160,
       "minLength": 50
     },
     "metaImage": {
@@ -21,10 +22,13 @@
       "multiple": false,
       "required": false,
       "allowedTypes": [
-        "images",
-        "files",
-        "videos"
+        "images"
       ]
+    },
+    "openGraph": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.open-graph"
     },
     "keywords": {
       "type": "text",
@@ -34,14 +38,14 @@
       "type": "string",
       "regex": "[^,]+"
     },
-    "structuredData": {
-      "type": "json"
-    },
     "metaViewport": {
       "type": "string"
     },
     "canonicalURL": {
       "type": "string"
+    },
+    "structuredData": {
+      "type": "json"
     }
   }
 }
