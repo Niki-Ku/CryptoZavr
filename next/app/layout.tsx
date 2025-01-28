@@ -1,11 +1,12 @@
+import { ReactNode } from "react";
 import "./globals.css";
 
-export default function RootLayout() {
-  return (
-    <html>
-      <body>
-        <div>hello</div>
-      </body>
-    </html>
-  );
-}
+const Layout = ({ children }: { children: ReactNode }) => {
+	return (
+		<html>
+			<body>{children}</body>
+		</html>
+	);
+};
+
+export default Layout;
