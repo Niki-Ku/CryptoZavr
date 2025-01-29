@@ -33,3 +33,10 @@ export interface Product {
   images: any[];
   categories?: any[];
 };
+
+export interface ILink {
+	id: number;
+	url: string;
+	text: string;
+	isExternal: boolean;
+}
