@@ -26,7 +26,7 @@ const config: Config = {
 				},
 				accent: {
 					primary: "#1e587c", // Base color for buttons/links
-					hover: "#2D6D96", // Hover state
+					hover: "#3F7FAE", // Hover state
 					clicked: "#17425C", // Clicked state
 				},
 				complementary: {
