@@ -7,8 +7,9 @@ import {
 } from "@/utils/strapiUtils";
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
-	const footerConfig = createPopulateConfig(["footer"], {
-		footer: ["logoText", "navigationLinks", "socialLinks"],
+	const footerConfig = createPopulateConfig(["footer", "logo"], {
+		footer: ["navigationLinks", "socialLinks"],
+		logo: true,
 	});
 	const url = createStrapiUrl("/api/global", footerConfig);
 	const data = await getStrapiData(url);
@@ -17,7 +18,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
 		<div className="min-h-[100svh] grid grid-rows-[auto_1fr_auto] w-full">
 			<div>Header</div>
 			{children}
-			<Footer data={data.data.footer} />
+			<Footer data={data.data.footer} logo={data.data.logo} />
 		</div>
 	);
 };

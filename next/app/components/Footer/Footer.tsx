@@ -8,14 +8,14 @@ import { Fragment } from "react";
 interface IFooter {
 	data: {
 		id: number;
-		logoText: ILink;
 		navigationLinks: ILink[];
 		socialLinks: ILink[];
 	};
+	logo: ILink;
 }
 
-const Footer: React.FC<IFooter> = ({ data }) => {
-	const { logoText, navigationLinks, socialLinks } = data;
+const Footer: React.FC<IFooter> = ({ data, logo }) => {
+	const { navigationLinks, socialLinks } = data;
 	return (
 		<footer
 			aria-label="Footer"
@@ -24,7 +24,7 @@ const Footer: React.FC<IFooter> = ({ data }) => {
 			<div className="text-center p-4 md:p-8 md:py-20 md:gap-3 flex flex-col md:flex-row md:justify-between md:items-center mx-auto max-w-[1420px]">
 				{/* change it to link or create seperate logo component */}
 				<h2 className="font-bold text-2xl mt-10 mb-6 md:m-0">
-					{logoText.text}
+					{logo.text}
         </h2>
         {/* should I make seperate component out of it? */}
 				<div className="flex flex-col gap-3 text-lg md:flex-row">
