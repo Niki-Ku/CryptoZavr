@@ -15,10 +15,10 @@ export interface ComponentsLink extends Struct.ComponentSchema {
 export interface LayoutFooter extends Struct.ComponentSchema {
   collectionName: 'components_layout_footers';
   info: {
+    description: '';
     displayName: 'Footer';
   };
   attributes: {
-    logoText: Schema.Attribute.Component<'components.link', false>;
     navigationLinks: Schema.Attribute.Component<'components.link', true>;
     socialLinks: Schema.Attribute.Component<'components.link', true>;
   };

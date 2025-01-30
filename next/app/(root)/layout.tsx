@@ -5,6 +5,7 @@ import {
 	createStrapiUrl,
 	getStrapiData,
 } from "@/utils/strapiUtils";
+import Header from "../components/Header/Header";
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
 	const footerConfig = createPopulateConfig(["footer", "logo"], {
@@ -16,7 +17,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
 
 	return (
 		<div className="min-h-[100svh] grid grid-rows-[auto_1fr_auto] w-full">
-			<div>Header</div>
+			<Header />
 			{children}
 			<Footer data={data.data.footer} logo={data.data.logo} />
 		</div>
