@@ -24,11 +24,23 @@ export interface LayoutFooter extends Struct.ComponentSchema {
   };
 }
 
+export interface LayoutHeader extends Struct.ComponentSchema {
+  collectionName: 'components_layout_headers';
+  info: {
+    displayName: 'Header';
+  };
+  attributes: {
+    loggedInLinks: Schema.Attribute.Component<'components.link', true>;
+    loggedOutLinks: Schema.Attribute.Component<'components.link', true>;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'components.link': ComponentsLink;
       'layout.footer': LayoutFooter;
+      'layout.header': LayoutHeader;
     }
   }
 }
