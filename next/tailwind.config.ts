@@ -17,25 +17,25 @@ const config: Config = {
           Status: text-feedback-success, text-feedback-warning, text-feedback-error
          */
 				background: {
-					main: "#F2F6FA", // Main background
-					component: "#E3EDF4", // Component background
+					main: "#102A44", // Dark blue main background
+					component: "#173A5E", // Slightly lighter dark blue component background
 				},
 				text: {
-					primary: "#1C2B36", // Primary text
-					secondary: "#4A6073", // Secondary text
+					primary: "#E3EDF4", // Light text for contrast against dark background
+					secondary: "#B0C5D8", // Softer, muted blue-gray for secondary text
 				},
 				accent: {
-					primary: "#1e587c", // Base color for buttons/links
-					hover: "#3F7FAE", // Hover state
-					clicked: "#17425C", // Clicked state
+					primary: "#3F7FAE", // Vibrant blue for buttons/links (from previous hover)
+					hover: "#5197CA", // Lighter, noticeable hover effect
+					clicked: "#2C6C94", // Darker blue for active state
 				},
 				complementary: {
-					coral: "#DA6851", // Secondary accent
+					coral: "#DA6851", // Keeping the warm secondary accent for contrast
 				},
 				feedback: {
-					success: "#2F8F65", // Success
-					warning: "#F4A259", // Warning
-					error: "#D9534F", // Error
+					success: "#2F8F65", // Green for success (unchanged)
+					warning: "#F4A259", // Warm orange for warning (unchanged)
+					error: "#D9534F", // Red for error (unchanged)
 				},
 			},
 		},

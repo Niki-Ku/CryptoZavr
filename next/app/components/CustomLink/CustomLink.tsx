@@ -13,7 +13,7 @@ const CustomLink: React.FC<{
 		return (
 			<a
 				href={`https://${url}`}
-				className={`text-accent-primary hover:text-accent-hover ${className}`}
+				className={`text-text-primary hover:text-complementary-coral ${className}`}
 				target="blank"
 			>
 				{children ? children : text}
@@ -23,7 +23,7 @@ const CustomLink: React.FC<{
 	return (
 		<Link
 			href={url}
-			className={`text-accent-primary hover:text-accent-hover ${className}`}
+			className={`text-text-primary hover:text-complementary-coral ${className}`}
 		>
 			{children ? children : text}
 		</Link>
