@@ -15,12 +15,23 @@ export interface ComponentsLink extends Struct.ComponentSchema {
 export interface LayoutFooter extends Struct.ComponentSchema {
   collectionName: 'components_layout_footers';
   info: {
+    description: '';
     displayName: 'Footer';
   };
   attributes: {
-    logoText: Schema.Attribute.Component<'components.link', false>;
     navigationLinks: Schema.Attribute.Component<'components.link', true>;
     socialLinks: Schema.Attribute.Component<'components.link', true>;
+  };
+}
+
+export interface LayoutHeader extends Struct.ComponentSchema {
+  collectionName: 'components_layout_headers';
+  info: {
+    displayName: 'Header';
+  };
+  attributes: {
+    loggedInLinks: Schema.Attribute.Component<'components.link', true>;
+    loggedOutLinks: Schema.Attribute.Component<'components.link', true>;
   };
 }
 
@@ -29,6 +40,7 @@ declare module '@strapi/strapi' {
     export interface ComponentSchemas {
       'components.link': ComponentsLink;
       'layout.footer': LayoutFooter;
+      'layout.header': LayoutHeader;
     }
   }
 }

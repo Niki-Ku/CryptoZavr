@@ -5,18 +5,19 @@ import {
 	createStrapiUrl,
 	getStrapiData,
 } from "@/utils/strapiUtils";
+import Header from "../components/Header/Header";
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
-	const footerConfig = createPopulateConfig(["footer", "logo"], {
+	const footerConfig = createPopulateConfig(["footer", "logo", "header"], {
 		footer: ["navigationLinks", "socialLinks"],
 		logo: true,
+		header: ["loggedInLinks", "loggedOutLinks"],
 	});
 	const url = createStrapiUrl("/api/global", footerConfig);
 	const data = await getStrapiData(url);
-
 	return (
-		<div className="min-h-[100svh] grid grid-rows-[auto_1fr_auto] w-full">
-			<div>Header</div>
+		<div className="min-h-[100svh] grid grid-rows-[1fr_auto] w-full mt-16">
+			<Header isLoggedIn={true} data={data.data.header} />
 			{children}
 			<Footer data={data.data.footer} logo={data.data.logo} />
 		</div>
