@@ -1,10 +1,6 @@
-
+import AuthFormLayout from "@/app/components/AuthFormLayout/AuthFormLayout";
 const RegisterPage = () => {
-  return (
-    <div>
-      RegisterPage
-    </div>
-  )
-}
+	return <AuthFormLayout links="register">Register form</AuthFormLayout>;
+};
 
 export default RegisterPage;
