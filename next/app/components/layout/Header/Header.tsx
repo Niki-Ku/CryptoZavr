@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import CustomLink from "../CustomLink/CustomLink";
+import CustomLink from "@/app/components/ui/CustomLink/CustomLink";
 import "./Header.css";
-import BurgerButton from "../BurgerButton/BurgerButton";
+import BurgerButton from "@/app/components/ui/BurgerButton/BurgerButton";
 import { ILink } from "@/types/types";
 
 interface IHeader {

@@ -1,4 +1,4 @@
-import Logo from "../Logo/Logo";
+import Logo from "../../ui/Logo/Logo";
 import Link from "next/link";
 
 const AuthFormLayout = ({
