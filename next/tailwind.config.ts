@@ -19,6 +19,7 @@ const config: Config = {
 				background: {
 					main: "#102A44", // Dark blue main background
 					component: "#173A5E", // Slightly lighter dark blue component background
+					border: "#1F4D79", // Noticeable blue border that contrasts well
 				},
 				text: {
 					primary: "#E3EDF4", // Light text for contrast against dark background
