@@ -1,4 +1,4 @@
-import Logo from "../Logo/Logo";
+import Logo from "../../ui/Logo/Logo";
 import Link from "next/link";
 
 const AuthFormLayout = ({
@@ -10,7 +10,7 @@ const AuthFormLayout = ({
 }) => {
 	return (
 		<div className="p-8 md:m-auto md:mt-16 md:w-[420px]">
-			<div className="min-h-[500px] md:border md:border-background-component md:rounded-3xl py-8 md:px-8">
+			<div className="min-h-[500px] md:border md:border-background-border md:rounded-3xl py-8 md:px-8">
 				<Logo />
 				{children}
 			</div>

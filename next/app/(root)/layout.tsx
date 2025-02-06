@@ -1,11 +1,11 @@
 import { ReactNode } from "react";
-import Footer from "../components/Footer/Footer";
+import Footer from "../components/layout/Footer/Footer";
 import {
 	createPopulateConfig,
 	createStrapiUrl,
 	getStrapiData,
 } from "@/utils/strapiUtils";
-import Header from "../components/Header/Header";
+import Header from "../components/layout/Header/Header";
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
 	const footerConfig = createPopulateConfig(["footer", "logo", "header"], {

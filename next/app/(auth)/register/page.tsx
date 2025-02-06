@@ -1,6 +1,6 @@
 "use client"
 
-import AuthFormLayout from "@/app/components/AuthFormLayout/AuthFormLayout";
+import AuthFormLayout from "@/app/components/layout/AuthFormLayout/AuthFormLayout";
 import { registerUserAction } from "@/data/actions/auth-actions";
 import { useFormState } from "react-dom";
 
