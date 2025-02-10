@@ -1,4 +1,4 @@
-type CustomButtonProps = React.HTMLAttributes<HTMLButtonElement> & {
+type CustomButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 	variant?: "primary" | "secondary" | "complementary";
 	className?: string;
 };
