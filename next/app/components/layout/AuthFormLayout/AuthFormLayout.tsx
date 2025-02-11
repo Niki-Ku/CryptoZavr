@@ -9,7 +9,7 @@ const AuthFormLayout = ({
 	links?: "register" | "login";
 }) => {
 	return (
-		<div className="p-8 md:m-auto md:mt-16 md:w-[420px]">
+		<div className="p-8 md:m-auto md:mt-16 md:w-[480px]">
 			<div className="min-h-[500px] md:border md:border-background-border md:rounded-3xl py-8 md:px-8">
 				<Logo />
 				{children}

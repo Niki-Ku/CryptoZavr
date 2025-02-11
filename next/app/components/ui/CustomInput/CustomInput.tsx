@@ -1,18 +1,17 @@
+import { forwardRef } from "react";
+
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	icon?: React.ReactNode;
 	onIconClick?: () => void;
 }
 
-const CustomInput: React.FC<CustomInputProps> = ({
-	icon,
-	onIconClick,
-	className,
-	...props
-}) => {
+const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
+	({ icon, onIconClick, className, ...props }, ref ) => {
 	return (
 		<div className="relative w-full">
 			{/* Input Field */}
 			<input
+				ref={ref}
 				{...props}
 				className={`w-full px-4 py-2 border border-background-border bg-transparent rounded-md focus:border-accent-hover hover:border-accent-hover focus:outline-none ${
 					icon ? "pr-10" : ""
@@ -31,6 +30,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
 			)}
 		</div>
 	);
-};
+});
 
 export default CustomInput;
