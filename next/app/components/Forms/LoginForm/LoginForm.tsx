@@ -1,14 +1,15 @@
 "use client";
-import { useState } from "react";
-import { registerUserAction } from "@/data/actions/auth-actions";
-import { useFormState } from "react-dom";
 import CustomInput from "../../ui/CustomInput/CustomInput";
 import ErrorMessage from "../../ui/ErrorMessage/ErrorMessage";
 import CustomButton from "../../ui/CustomButton/CustomButton";
+import { loginUserAction } from "@/data/actions/auth-actions";
+import { useFormState } from "react-dom";
 import { Controller, useForm } from "react-hook-form";
-import { schemaRegister, schemaRegisterType } from "@/schemas/schemas";
+import { schemaLogin } from "@/schemas/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import Link from "next/link";
+import { LoginUserProps } from "@/types/types";
 import hidePass from "@/public/icons/another/hidePass.svg";
 import showPass from "@/public/icons/another/showPass.svg";
 import Image from "next/image";
@@ -20,9 +21,13 @@ const INITIAL_STATE = {
 	message: null,
 };
 
-const RegisterForm = () => {
+// TODO:
+// add show/hide password button (make state with all fields and on click update only needed)
+// make possible to use only email as identifier instead of email and username
+
+const LoginForm = () => {
 	const [actionFormState, formAction] = useFormState(
-		registerUserAction,
+		loginUserAction,
 		INITIAL_STATE
 	);
 	const [passwordType, setpasswordType] = useState<boolean>(true);
@@ -31,15 +36,14 @@ const RegisterForm = () => {
 		handleSubmit,
 		formState: { errors, isSubmitting },
 		control,
-	} = useForm<schemaRegisterType>({
-		resolver: zodResolver(schemaRegister),
+	} = useForm<LoginUserProps>({
+		resolver: zodResolver(schemaLogin),
 		defaultValues: {
-			email: "",
+			identifier: "",
 			password: "",
-			passwordRepeat: "",
-			username: "",
 		},
 	});
+
 	return (
 		<>
 			<div className="text-3xl my-8 font-bold">Welcome to CryptoZavr</div>
@@ -51,27 +55,15 @@ const RegisterForm = () => {
 			>
 				<div>
 					<Controller
-						name="email"
+						name="identifier"
 						control={control}
 						render={({ field }) => (
 							<CustomInput {...field} placeholder="Email" type="text" />
 						)}
 					/>
 					<ErrorMessage
-						error={errors.email?.message || actionFormState?.zodErrors?.email}
-					/>
-				</div>
-				<div>
-					<Controller
-						name="username"
-						control={control}
-						render={({ field }) => (
-							<CustomInput {...field} placeholder="Username" type="text" />
-						)}
-					/>
-					<ErrorMessage
 						error={
-							errors.username?.message || actionFormState?.zodErrors?.username
+							errors.identifier?.message || actionFormState?.zodErrors?.email
 						}
 					/>
 				</div>
@@ -92,31 +84,12 @@ const RegisterForm = () => {
 								onIconClick={() => setpasswordType((prev) => !prev)}
 								placeholder="Password"
 								type={passwordType ? "password" : "text"}
-							/>
+							></CustomInput>
 						)}
 					/>
 					<ErrorMessage
 						error={
 							errors.password?.message || actionFormState?.zodErrors?.password
-						}
-					/>
-				</div>
-				<div>
-					<Controller
-						name="passwordRepeat"
-						control={control}
-						render={({ field }) => (
-							<CustomInput
-								{...field}
-								placeholder="Confirm password"
-								type={passwordType ? "password" : "text"}
-							/>
-						)}
-					/>
-					<ErrorMessage
-						error={
-							errors.passwordRepeat?.message ||
-							actionFormState?.zodErrors?.passwordRepeat
 						}
 					/>
 				</div>
@@ -128,8 +101,14 @@ const RegisterForm = () => {
 					error={actionFormState?.strapiErrors?.message}
 				/>
 			</form>
+			<Link
+				href="/reset-password"
+				className="text-sm underline mt-6 block text-center hover:text-complementary-coral"
+			>
+				Forget your password?
+			</Link>
 		</>
 	);
 };
 
-export default RegisterForm;
+export default LoginForm;

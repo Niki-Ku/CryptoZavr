@@ -1,13 +1,4 @@
-interface RegisterUserProps {
-  password: string;
-  username: string;
-  email: string;
-}
-
-interface LoginUserProps {
-  identifier: string;
-  password: string;
-}
+import { RegisterUserProps, LoginUserProps } from "@/types/types";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
