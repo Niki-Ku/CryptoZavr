@@ -100,7 +100,7 @@ export async function loginUserAction(prevState: any, formData: FormData) {
   redirect("/");
 }
 
-export async function logoutAction() {
+export const logoutAction = async() => {
   const cookieStore = await cookies();
   cookieStore.set("jwt", "", { ...config, maxAge: 0 });
   redirect("/");

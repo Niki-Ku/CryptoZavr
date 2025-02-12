@@ -2,7 +2,7 @@ import { RegisterUserProps, LoginUserProps } from "@/types/types";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export async function registerUserService(userData: RegisterUserProps) {
+export const registerUserService = async(userData: RegisterUserProps) => {
   const url = new URL("/api/auth/local/register", baseUrl);
 
   try {
@@ -20,7 +20,7 @@ export async function registerUserService(userData: RegisterUserProps) {
   }
 }
 
-export async function loginUserService(userData: LoginUserProps) {
+export const loginUserService = async(userData: LoginUserProps) => {
   const url = new URL("/api/auth/local", baseUrl);
 
   try {

@@ -6,6 +6,7 @@ import {
 	getStrapiData,
 } from "@/utils/strapiUtils";
 import Header from "../components/layout/Header/Header";
+import { getUserMeLoader } from "@/data/services/get-user-me-loader";
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
 	const footerConfig = createPopulateConfig(["footer", "logo", "header"], {
@@ -15,9 +16,10 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
 	});
 	const url = createStrapiUrl("/api/global", footerConfig);
 	const data = await getStrapiData(url);
+	const user = await getUserMeLoader();
 	return (
 		<div className="min-h-[100svh] grid grid-rows-[1fr_auto] w-full mt-16">
-			<Header isLoggedIn={true} data={data.data.header} />
+			<Header isLoggedIn={user.ok} data={data.data.header} />
 			{children}
 			<Footer data={data.data.footer} logo={data.data.logo} />
 		</div>
