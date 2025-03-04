@@ -18,7 +18,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
 	const data = await getStrapiData(url);
 	const user = await getUserMeLoader();
 	return (
-		<div className="min-h-[100svh] grid grid-rows-[1fr_auto] w-full mt-16">
+		<div className="min-h-[100svh] grid grid-rows-[1fr_auto] w-full mt-16 bg-background-main">
 			<Header isLoggedIn={user.ok} data={data.data.header} />
 			{children}
 			<Footer data={data.data.footer} logo={data.data.logo} />
