@@ -40,3 +40,14 @@ export interface ILink {
 	text: string;
 	isExternal: boolean;
 }
+
+export interface RegisterUserProps {
+  password: string;
+  username: string;
+  email: string;
+}
+
+export interface LoginUserProps {
+  identifier: string;
+  password: string;
+}
