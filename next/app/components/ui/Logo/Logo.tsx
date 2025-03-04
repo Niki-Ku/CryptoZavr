@@ -2,19 +2,19 @@ import Link from "next/link";
 
 const Logo = ({ isLink = false }: { isLink?: boolean }) => {
 	return (
-		<div>
+		<div className="text-white">
 			{isLink ? (
 				<Link
 					aria-label="Logo"
 					href="/"
-					className="font-bold text-2xl mt-10 mb-6 md:m-0"
+					className="font-bold inline-block text-2xl my-4 md:m-0"
 				>
 					CryptoZavr
 				</Link>
 			) : (
 				<span
 					aria-label="Logo"
-					className="font-bold text-2xl mt-10 mb-6 md:m-0"
+					className="font-bold inline-block text-2xl my-4 md:m-0"
 				>
 					CryptoZavr
 				</span>
