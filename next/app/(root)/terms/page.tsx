@@ -14,6 +14,7 @@ const Terms = async () => {
 	// const data = await getStrapiData(url);
   const data = await getStrapiData("/api/terms-page");
   console.log(data.data.heading)
+  console.log(data.data)
   return (
     <div>
       <h2>{data.data.heading}</h2>

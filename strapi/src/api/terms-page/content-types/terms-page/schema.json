@@ -4,7 +4,8 @@
   "info": {
     "singularName": "terms-page",
     "pluralName": "terms-pages",
-    "displayName": "TermsPage"
+    "displayName": "TermsPage",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -16,6 +17,9 @@
     },
     "description": {
       "type": "text"
+    },
+    "termsStatements": {
+      "type": "richtext"
     }
   }
 }

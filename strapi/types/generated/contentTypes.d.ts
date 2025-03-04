@@ -435,6 +435,7 @@ export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
 export interface ApiTermsPageTermsPage extends Struct.SingleTypeSchema {
   collectionName: 'terms_pages';
   info: {
+    description: '';
     displayName: 'TermsPage';
     pluralName: 'terms-pages';
     singularName: 'terms-page';
@@ -455,6 +456,7 @@ export interface ApiTermsPageTermsPage extends Struct.SingleTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    termsStatements: Schema.Attribute.RichText;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
