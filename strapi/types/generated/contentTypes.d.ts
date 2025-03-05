@@ -456,7 +456,7 @@ export interface ApiTermsPageTermsPage extends Struct.SingleTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    termsStatements: Schema.Attribute.RichText;
+    terms: Schema.Attribute.Component<'components.terms-text', true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

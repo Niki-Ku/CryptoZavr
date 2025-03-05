@@ -18,8 +18,10 @@
     "description": {
       "type": "text"
     },
-    "termsStatements": {
-      "type": "richtext"
+    "terms": {
+      "type": "component",
+      "repeatable": true,
+      "component": "components.terms-text"
     }
   }
 }
