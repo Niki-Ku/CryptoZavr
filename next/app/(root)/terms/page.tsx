@@ -31,7 +31,7 @@ const Terms = async () => {
 	return (
 		<div className="p-8 text-white bg-background-main">
 			<h2 className="text-2xl mb-4">{data.data.heading}</h2>
-			<p>{data.data.description}</p>
+			<p className="font-light">{data.data.description}</p>
 			<ol className="mt-6">
 				{data.data.terms.map((e: Terms) => (
 					<li key={e.id} className="mb-6 text-lg">
