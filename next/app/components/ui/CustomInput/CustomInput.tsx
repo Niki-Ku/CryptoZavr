@@ -30,6 +30,8 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
 			)}
 		</div>
 	);
-});
+	});
+
+CustomInput.displayName = "CustomInput"
 
 export default CustomInput;
