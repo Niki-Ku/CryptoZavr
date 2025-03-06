@@ -7,14 +7,14 @@ const Logo = ({ isLink = false }: { isLink?: boolean }) => {
 				<Link
 					aria-label="Logo"
 					href="/"
-					className="font-bold inline-block text-2xl my-4 md:m-0"
+					className="font-bold inline-block text-2xl my-4"
 				>
 					CryptoZavr
 				</Link>
 			) : (
 				<span
 					aria-label="Logo"
-					className="font-bold inline-block text-2xl my-4 md:m-0"
+					className="font-bold inline-block text-2xl my-4"
 				>
 					CryptoZavr
 				</span>
