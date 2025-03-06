@@ -3,24 +3,7 @@ import {
 	createStrapiUrl,
 	getStrapiData,
 } from "@/utils/strapiUtils";
-
-interface Terms {
-	id: string;
-	subheading: string;
-	termsText: TermsText[];
-}
-
-interface TermsText {
-	type: string;
-	children: TextChildren[];
-}
-
-interface TextChildren {
-	type: string;
-	text: string;
-}
-
-// move interfaces to types file
+import { ITerms, ITermsText, ITextChildren } from "@/types/types";
 
 const Terms = async () => {
 	const termsConfig = createPopulateConfig(["terms"], {
@@ -33,14 +16,16 @@ const Terms = async () => {
 			<h2 className="text-2xl mb-4">{data.data.heading}</h2>
 			<p className="font-light">{data.data.description}</p>
 			<ol className="mt-6">
-				{data.data.terms.map((e: Terms) => (
+				{data.data.terms.map((e: ITerms) => (
 					<li key={e.id} className="mb-6 text-lg">
 						{e.subheading}
 						<hr className="mb-2" />
 						<ol className="text-base font-light">
-							{e.termsText.map((t: TermsText, i: number) => (
-								<li key={e.id + "list" + i}>{t.children[0].text}</li>
-							))}
+							{e.termsText.flatMap((t: ITermsText) =>
+								t.children.map((child: ITextChildren, i: number) => (
+									<li key={e.id + "list" + i}>{child.text}</li>
+								))
+							)}
 						</ol>
 					</li>
 				))}
