@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_components_terms_texts",
+  "info": {
+    "displayName": "TermsText",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "subheading": {
+      "type": "text"
+    },
+    "termsText": {
+      "type": "blocks"
+    }
+  }
+}

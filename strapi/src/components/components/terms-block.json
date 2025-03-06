@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_components_terms_blocks",
+  "info": {
+    "displayName": "TermsBlock",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "termsText": {
+      "type": "component",
+      "repeatable": true,
+      "component": "components.terms-text"
+    }
+  }
+}
