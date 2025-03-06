@@ -4,7 +4,8 @@ import WalletHeading from "@/app/components/layout/WalletHeading/WalletHeading";
 // Connect to the Ethereum network
 const alchemyKey = process.env.ALCHEMY_SECRET_KEY;
 const provider = new JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${alchemyKey}`);
-const BnbProvider = new JsonRpcProvider(`https://bnb-testnet.g.alchemy.com/v2/${alchemyKey}`);
+const BnbTestProvider = new JsonRpcProvider(`https://bnb-testnet.g.alchemy.com/v2/${alchemyKey}`);
+const BnbProvider = new JsonRpcProvider(`https://bnb-mainnet.g.alchemy.com/v2/${alchemyKey}`);
 
 // TODO:
 // instal Ethers.js   DONE
@@ -47,12 +48,12 @@ const WalletPage = async () => {
         <WalletHeading />
 
       </div>
-      {/* <p>Wallet adress: {wallet.address}</p>
+      <p>Wallet adress: {wallet.address}</p>
       <p>Wallet publick key: {wallet.publicKey}</p>
       <p>Wallet balance ETH: {ethers.formatEther(balance)}</p>
       <p>Network: {network.name}</p>
       <p>BNB Network: {bnbNetwork.name}</p>
-      <p>BNB balance: {ethers.formatEther(BnbBalance)}</p> */}
+      <p>BNB balance: {ethers.formatEther(BnbBalance)}</p>
     </div>
   )
 };
