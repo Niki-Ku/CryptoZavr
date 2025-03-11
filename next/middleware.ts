@@ -19,7 +19,7 @@ export const middleware = async(request: NextRequest) => {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (currentPath === "/login" || currentPath === "/register" && user.ok) {
+  if (currentPath === "/login" && user.ok || currentPath === "/register" && user.ok) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
