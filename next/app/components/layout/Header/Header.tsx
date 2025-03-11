@@ -5,6 +5,8 @@ import "./Header.css";
 import BurgerButton from "@/app/components/ui/BurgerButton/BurgerButton";
 import { ILink } from "@/types/types";
 import Logo from "../../ui/Logo/Logo";
+import CustomButton from "../../ui/CustomButton/CustomButton";
+import { logoutAction } from "@/data/actions/auth-actions";
 
 interface IHeader {
 	data: {
@@ -52,7 +54,11 @@ const Header: React.FC<IHeader> = ({ data, isLoggedIn }) => {
 						<CustomLink linkData={l} />
 					</li>
 				))}
-				{isLoggedIn && <li className="text-2xl md:text-xl">Log out</li>}
+				{isLoggedIn && (
+					<form action={logoutAction} className="text-2xl md:text-xl">
+						<CustomButton type="submit">Log out</CustomButton>
+					</form>
+				)}
 			</ul>
 		</nav>
 	);
