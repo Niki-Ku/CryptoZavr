@@ -21,8 +21,8 @@ const Terms = async () => {
 						{e.subheading}
 						<hr className="mb-2" />
 						<ol className="text-base font-light">
-							{e.termsText.flatMap((t: ITermsText) =>
-								t.children.map((child: ITextChildren, i: number) => (
+						{e.termsText.flatMap((t: ITermsText, i : number) =>
+								t.children.map((child: ITextChildren) => (
 									<li key={e.id + "list" + i}>{child.text}</li>
 								))
 							)}
