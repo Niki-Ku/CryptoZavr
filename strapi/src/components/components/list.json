@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_components_lists",
+  "info": {
+    "displayName": "List",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "termsText": {
+      "displayName": "TermsText",
+      "type": "component",
+      "repeatable": true,
+      "component": "components.terms-text"
+    }
+  }
+}
