@@ -32,6 +32,7 @@ const config: Config = {
 				},
 				complementary: {
 					coral: "#DA6851", // Keeping the warm secondary accent for contrast
+					mutedGold: "#C49A6C",
 				},
 				feedback: {
 					success: "#2F8F65", // Green for success (unchanged)
