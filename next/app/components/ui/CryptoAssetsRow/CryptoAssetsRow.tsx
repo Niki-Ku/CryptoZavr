@@ -6,16 +6,17 @@ import copyImage from "@/public/icons/another/copy.svg";
 
 interface ICryptoAssetsRow {
 	iconUrl?: string;
-	name: string;
+	name?: string;
 	amount: number;
 	networkName: string;
 	onClick?: () => void;
 	address?: string;
-	price: number;
+	price?: number;
 }
 
 // TODO:
 // make better semantic
+// add try of getting img from local storage if no image available
 
 const CryptoAssetsRow: React.FC<ICryptoAssetsRow> = ({
 	iconUrl,
@@ -42,24 +43,24 @@ const CryptoAssetsRow: React.FC<ICryptoAssetsRow> = ({
 			onClick={onClick}
 			className="group flex justify-between items-center w-full px-2 py-1 border-b border-background-border cursor-pointer"
 		>
-			<div className="inline-block flex items-center">
+			<div className="inline-block flex items-start p-1">
 				{iconUrl ? (
 					<Image
 						src={iconUrl}
 						alt={networkName}
-						width={40}
-						height={40}
-						className="inline-block"
+						width={100}
+						height={100}
+						className="inline-block w-auto w-10 h-10 md:w-12 md:h-12"
 					/>
 				) : (
 					<span
 						aria-label="no icon available"
-						className="w-5 h-5 bg-black inline-block rounded-full"
+						className="w-10 h-10 md:w-12 md:h-12 bg-black inline-block rounded-full"
 					/>
 				)}
 				<div>
 					<div className="felx relative text-[12px] md:text-[14px]">
-						<span className="mx-1 md:mx-2">{name}</span>
+						<span className="mx-1 md:mx-2 font-bold">{name?.toUpperCase()}</span>
 						<span className="bg-background-component p-1 rounded-xl">
 							{networkName}
 						</span>
@@ -76,12 +77,16 @@ const CryptoAssetsRow: React.FC<ICryptoAssetsRow> = ({
 							</div>
 						)}
 					</div>
-					<div className="pl-1 md:pl-2 opacity-80">{price.toFixed(2)}</div>
+					{price && (
+						<div className="pl-1 md:pl-2 opacity-80">{price.toFixed(2)}</div>
+					)}
 				</div>
 			</div>
 			<div className="flex flex-col items-end">
 				<div>{amount}</div>
-				<div className="opacity-80">{(amount * price).toFixed(2)} $</div>
+				{price && (
+					<div className="opacity-80">{(amount * price).toFixed(2)} $</div>
+				)}
 			</div>
 		</div>
 	);
