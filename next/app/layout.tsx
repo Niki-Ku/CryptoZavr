@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import Providers from "@/providers/providers";
+import Providers from "@/providers/Providers";
 import "./globals.css";
 
 const Layout = ({ children }: { children: ReactNode }) => {
