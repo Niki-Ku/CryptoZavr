@@ -62,3 +62,8 @@ export interface ICoingeckoCoinResponse {
     }
   }
 }
+
+export interface IMnemonicPhraseInput {
+	isVisible: boolean;
+	value: string;
+}
