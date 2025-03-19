@@ -59,3 +59,8 @@ export interface ICoingeckoCoinResponse {
 }
 
 export type INetworkAndGeckoResponse = INetwork & Partial<ICoingeckoCoinResponse>;
+
+export interface IMnemonicPhraseInput {
+	isVisible: boolean;
+	value: string;
+}
