@@ -8,17 +8,19 @@ import CustomButton from "../../ui/CustomButton/CustomButton";
 interface IMnemonicInput {
 	arr: IMnemonicPhraseInput[];
 	onChange: React.Dispatch<React.SetStateAction<IMnemonicPhraseInput[]>>;
-	onMnemonicSubmit: () => void;
+	onMnemonicSubmit: (e:React.FormEvent) => void;
 	error?: string;
+	setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 // make mobile version
-const MnemonicInput: React.FC<IMnemonicInput> = ({ arr, onChange, onMnemonicSubmit, error }) => {
+const MnemonicInput: React.FC<IMnemonicInput> = ({ arr, onChange, onMnemonicSubmit, error, setError }) => {
 	const inputChange = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
 		const mutateArr = arr.map((item: IMnemonicPhraseInput, index: number) =>
-			index === i ? { ...item, value: e.target.value } : item
+			index === i ? { ...item, value: e.target.value.trim() } : item
 		);
 		onChange(mutateArr);
+		if (error) setError('');
 	};
 
 	const inputIconClick = (i: number) => {
