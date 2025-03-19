@@ -8,9 +8,12 @@ import CustomButton from "../../ui/CustomButton/CustomButton";
 interface IMnemonicInput {
 	arr: IMnemonicPhraseInput[];
 	onChange: React.Dispatch<React.SetStateAction<IMnemonicPhraseInput[]>>;
+	onMnemonicSubmit: () => void;
+	error?: string;
 }
 
-const MnemonicInput: React.FC<IMnemonicInput> = ({ arr, onChange }) => {
+// make mobile version
+const MnemonicInput: React.FC<IMnemonicInput> = ({ arr, onChange, onMnemonicSubmit, error }) => {
 	const inputChange = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
 		const mutateArr = arr.map((item: IMnemonicPhraseInput, index: number) =>
 			index === i ? { ...item, value: e.target.value } : item
@@ -25,7 +28,6 @@ const MnemonicInput: React.FC<IMnemonicInput> = ({ arr, onChange }) => {
 		onChange(mutateArr);
 	};
 
-	// finish styling
 	const gridStyles: Record<number, string> = {
 		12: "grid-cols-2",
 		18: "grid-cols-3",
@@ -33,7 +35,7 @@ const MnemonicInput: React.FC<IMnemonicInput> = ({ arr, onChange }) => {
 	};
 
 	return (
-		<form>
+		<form onSubmit={onMnemonicSubmit}>
 			<div
 				className={`grid grid-flow-col grid-rows-6 gap-2 ${
 					gridStyles[arr.length]
@@ -60,7 +62,8 @@ const MnemonicInput: React.FC<IMnemonicInput> = ({ arr, onChange }) => {
 					)
 				)}
 			</div>
-			<CustomButton className="w-full mt-2">Next</CustomButton>
+			{error && (<div className="text-red-500">{error}</div>)}
+			<CustomButton className="w-full mt-2">Add Wallet</CustomButton>
 		</form>
 	);
 };
