@@ -14,21 +14,23 @@ interface IWalletHeading {
 // add functions to add wallets
 // where and how to store hd wallet credentials
 // on create click
-// user is asked to type password if there is no records in localStorage and notified that it is a way to access to the private keys
-// of the wallet that is stored in his Storage DB. (this is functionality for better user experience)
-// trigger creating of HDWallet
-// user is shown his mnemonic for the first and the last time with warning and ability to copy it
-// wallet created
+	// user is asked to type password if there is no records in localStorage and notified that it is a way to access to the private keys  
+	// of the wallet that is stored in his Storage DB. (this is functionality for better user experience) 
+	// trigger creating of HDWallet
+	// user is shown his mnemonic for the first and the last time with warning and ability to copy it 
+	// wallet created
+	
+	
+	
+		// create wallet
+		// const mnemonic = await ethers.Wallet.createRandom().mnemonic?.phrase;
+		// const wallet = await ethers.Wallet.fromPhrase(mnemonic!);
+const getWalletWithMnemonic = (mnemonic: string) => {
+	const mnemonicPhrase = ethers.Mnemonic.fromPhrase(mnemonic);
+	const wallet = ethers.HDNodeWallet.fromMnemonic(mnemonicPhrase);
+	return wallet
+}
 
-// create wallet
-// const mnemonic = await ethers.Wallet.createRandom().mnemonic?.phrase;
-// const wallet = await ethers.Wallet.fromPhrase(mnemonic!);
-
-// get wallet
-const mnemonic = ethers.Mnemonic.fromPhrase(
-	"unaware young shy minor color phrase retreat able that mother youth favorite"
-);
-const wallet = ethers.HDNodeWallet.fromMnemonic(mnemonic);
 const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 	const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
 	const [memonicPhraseInput, setMnemonicPhraseInput] = useState<
