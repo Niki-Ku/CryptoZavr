@@ -7,8 +7,8 @@ export const schemaRegister = z
 		}),
 		username: z.string().min(3).max(32),
 		password: z
-      .string()
-      .trim()
+			.string()
+			.trim()
 			.min(8, "Password must be at least 8 characters long")
 			.max(32, "Password must be at most 32 characters long")
 			.regex(
@@ -18,15 +18,15 @@ export const schemaRegister = z
 		passwordRepeat: z.string().trim(),
 	})
 	.refine(
-    (data) => {
+		(data) => {
 			return data.password === data.passwordRepeat;
 		},
 		{
 			message: "Passwords do not match",
 			path: ["passwordRepeat"],
 		}
-);
-  
+	);
+
 export type schemaRegisterType = z.output<typeof schemaRegister>;
 
 export const schemaLogin = z.object({
@@ -46,4 +46,16 @@ export const schemaLogin = z.object({
 		.max(100, {
 			message: "Password must be between 6 and 100 characters",
 		}),
+});
+
+export const schemaPassword = z.object({
+	password: z
+		.string()
+		.trim()
+		.min(8, "Password must be at least 8 characters long")
+		.max(32, "Password must be at most 32 characters long")
+		.regex(
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+			"Password must include at least one uppercase letter, one lowercase letter, and one number"
+		)
 });
