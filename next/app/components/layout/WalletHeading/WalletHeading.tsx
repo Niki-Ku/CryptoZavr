@@ -2,10 +2,11 @@
 
 import AddWallet from "../../ui/AddWallet/AddWallet";
 import CustomDropdown from "../../ui/CustomDropdown/CustomDropdown";
-import { ethers, HDNodeWallet } from "ethers";
-import Modal from "../../ui/Modal/Modal";
-import { useEffect, useState } from "react";
 import MnemonicInput from "../MnemonicInput/MnemonicInput";
+import Modal from "../../ui/Modal/Modal";
+import PasswordForm from "../../Forms/PasswordForm/PasswordForm";
+import { ethers, HDNodeWallet } from "ethers";
+import { useEffect, useRef, useState } from "react";
 import { IMnemonicPhraseInput } from "@/types/types";
 import { wordlists } from "bip39";
 
@@ -52,14 +53,22 @@ const getWalletWithMnemonic = (
 
 const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 	const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
+	const [isPasswordModalOpen, setIsPasswordModalOpen] = useState<boolean>(false);
+	const indexDBPassword = useRef<string>('');
 	const [mnemonicPhraseInput, setMnemonicPhraseInput] = useState<
 		IMnemonicPhraseInput[]
 	>(new Array(12).fill({ isVisible: true, value: "" }));
 	const [error, setError] = useState<string>("");
 
 	const onAddClick = () => {
-		setIsAddModalOpen(true);
+		setIsPasswordModalOpen(true);
 	};
+
+	const onPasswordSubmit = (password: string) => {
+		indexDBPassword.current = password;
+		setIsAddModalOpen(true)
+		setIsPasswordModalOpen(false)
+	}
 
 	const onMnemonicSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -79,6 +88,7 @@ const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 				// reset inputs
 				console.log(wallet);
 				console.log("saved");
+				console.log(indexDBPassword.current)
 			}
 		}
 	};
@@ -110,6 +120,7 @@ const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 			)}
 			{isAddModalOpen && (
 				<Modal isModalOpen={isAddModalOpen} onCloseClick={setIsAddModalOpen}>
+					{/* move to separate form component*/}
 					<p>
 						Your Mnemoic key. It will be encrypted with your password and
 						storred in your Session DB
@@ -121,6 +132,11 @@ const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 						error={error}
 						setError={setError}
 					/>
+				</Modal>
+			)}
+			{isPasswordModalOpen && (
+				<Modal isModalOpen={isPasswordModalOpen} onCloseClick={setIsPasswordModalOpen} >
+					<PasswordForm text="Attention" onPasswordSubmit={onPasswordSubmit} />
 				</Modal>
 			)}
 		</div>
