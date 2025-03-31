@@ -85,6 +85,9 @@ const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 			if (error) setError(error);
 			else {
 				// save to index.db and hash/encrypt it with password
+					// check if there is encrypted storage with password that
+					// if not - create one 
+					// else - add to existing
 				// reset inputs
 				console.log(wallet);
 				console.log("saved");
