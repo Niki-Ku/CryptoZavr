@@ -5,10 +5,12 @@ import CustomDropdown from "../../ui/CustomDropdown/CustomDropdown";
 import MnemonicInput from "../MnemonicInput/MnemonicInput";
 import Modal from "../../ui/Modal/Modal";
 import PasswordForm from "../../Forms/PasswordForm/PasswordForm";
-import { ethers, HDNodeWallet } from "ethers";
+import { ethers, HDNodeWallet, Mnemonic } from "ethers";
 import { useEffect, useRef, useState } from "react";
 import { IMnemonicPhraseInput } from "@/types/types";
 import { wordlists } from "bip39";
+import { Wallet } from "ethers";
+import { openDB } from "idb";
 
 // Define wallet type
 interface IWalletHeading {
@@ -18,6 +20,59 @@ interface IWalletHeading {
 // create wallet
 // const mnemonic = await ethers.Wallet.createRandom().mnemonic?.phrase;
 // const wallet = await ethers.Wallet.fromPhrase(mnemonic!);
+
+
+// export async function encryptMnemonicEthers(mnemonic : Mnemonic, password : string) {
+//     const wallet = HDNodeWallet.fromMnemonic(mnemonic);
+//     const encryptedJson = await wallet.encrypt(password); // JSON string
+//     return encryptedJson;
+// }
+
+// export async function decryptMnemonicEthers(encryptedJson, password) {
+// 	// const wallet = await Wallet.fromEncryptedJson(encryptedJson, password);
+// 	const wallet = await HDNodeWallet.fromEncryptedJson(encryptedJson, password);
+// 	return wallet.mnemonic.phrase;
+// }
+
+const dbName = "CryptoWalletDB";
+const storeName = "wallets";
+
+const setupDB = async () => {
+    const db = await openDB(dbName, 1, {
+        upgrade(db) {
+            if (!db.objectStoreNames.contains(storeName)) {
+                db.createObjectStore(storeName, { keyPath: "name" }); // 🔹 Use name as the primary key
+            }
+        },
+    });
+    return db;
+}
+
+const storeWallet = async (name : string, encryptedData : string) => {
+	const db = await setupDB();
+	await db.put(storeName, { name, data: encryptedData }); // 🔹 Store using name as key
+	console.log(`Wallet "${name}" stored successfully!`);
+}
+
+const getAllWallets = async () => {
+	const db = await setupDB();
+	return await db.getAll(storeName);
+}
+
+
+// export const encryptMnemonicHD = async (mnemonic : Mnemonic, password : string) => {
+export const encryptMnemonicHD = async (HDNodeWallet : HDNodeWallet, password : string) => {
+	// const hdWallet = HDNodeWallet.fromMnemonic(mnemonic);
+	const wallet = new Wallet(HDNodeWallet.privateKey); // Convert to Wallet
+	const res = await wallet.encrypt(password); // Encrypt and return JSON
+	return res;
+}
+
+export const decryptMnemonicHD = async (encryptedJson : string, password : string) => {
+	const wallet = await Wallet.fromEncryptedJson(encryptedJson, password);
+	// return wallet.mnemonic.phrase; // Returns mnemonic
+	return wallet; // Returns mnemonic
+}
 
 const checkMnemonicForErrors = (arr: IMnemonicPhraseInput[]) => {
 	let errors = false;
@@ -55,6 +110,7 @@ const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 	const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
 	const [isPasswordModalOpen, setIsPasswordModalOpen] = useState<boolean>(false);
 	const indexDBPassword = useRef<string>('');
+	const [HDWallet, setHDWallet] = useState<HDNodeWallet | null>(null);
 	const [mnemonicPhraseInput, setMnemonicPhraseInput] = useState<
 		IMnemonicPhraseInput[]
 	>(new Array(12).fill({ isVisible: true, value: "" }));
@@ -89,6 +145,8 @@ const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 					// if not - create one 
 					// else - add to existing
 				// reset inputs
+				setHDWallet(wallet);
+
 				console.log(wallet);
 				console.log("saved");
 				console.log(indexDBPassword.current)
@@ -96,9 +154,36 @@ const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 		}
 	};
 
+	const [isAdded, setIsAdded] = useState<boolean>(false)
+	useEffect(() => {
+		// triggering work of async functions after
+		const encryptAndStore = async (HDWallet : HDNodeWallet, password : string) => {
+			const encryptedMnemonic = await encryptMnemonicHD(HDWallet, password);
+			console.log(encryptedMnemonic);
+			// add to indexedDB
+			//
+			await storeWallet("first Wallet", encryptedMnemonic)
+			// temporary to see retrieved wallets
+			setIsAdded(prev => !prev);
+		};
+
+		if (HDWallet) {
+			encryptAndStore(HDWallet, indexDBPassword.current)
+		}
+	}, [HDWallet])
+
+
+	// remove
 	useEffect(() => {
 		console.log(mnemonicPhraseInput);
 	}, [mnemonicPhraseInput]);
+
+	useEffect(() => {
+		(async () => {
+			const wallets = await getAllWallets()
+			console.log(wallets)
+		 })();
+	}, [isAdded])
 
 	return (
 		<div className="w-full">
