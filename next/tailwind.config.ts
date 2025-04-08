@@ -39,6 +39,9 @@ const config: Config = {
 					warning: "#F4A259", // Warm orange for warning (unchanged)
 					error: "#D9534F", // Red for error (unchanged)
 				},
+				transp: {
+					three: "rgba(0, 0, 0, 0.3)",
+				},
 			},
 		},
 	},
