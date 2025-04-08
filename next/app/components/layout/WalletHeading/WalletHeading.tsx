@@ -5,126 +5,99 @@ import CustomDropdown from "../../ui/CustomDropdown/CustomDropdown";
 import MnemonicInput from "../MnemonicInput/MnemonicInput";
 import Modal from "../../ui/Modal/Modal";
 import PasswordForm from "../../Forms/PasswordForm/PasswordForm";
-import { ethers, HDNodeWallet, Mnemonic } from "ethers";
+import MnemonicRow from "../../ui/MnemonicRow/MnemonicRow";
+import { HDNodeWallet } from "ethers";
 import { useEffect, useRef, useState } from "react";
-import { IMnemonicPhraseInput } from "@/types/types";
-import { wordlists } from "bip39";
-import { Wallet } from "ethers";
-import { openDB } from "idb";
+import { IMnemonicPhraseInput, IIndexedDBRecord } from "@/types/types";
+import {
+	storeWallet,
+	getAllWallets,
+	deleteWallet,
+} from "@/utils/indexedDBUtils";
+import {
+	checkMnemonicForErrors,
+	createMnemonicFromInput,
+	getWalletWithMnemonic,
+	encryptMnemonicHD,
+	decryptMnemonicHD,
+} from "@/utils/ethersUtils";
 
-// Define wallet type
-interface IWalletHeading {
-	wallets?: number[];
-}
+// give the ability to change mnemonic name to user
+// make create wallet button functional
+// make UI
+// asking for a password
+// check if passwords matches with other if password was already set
+// showing user input with phrase with a copy button and notification
+// adding to the indexedDB
 
-// create wallet
-// const mnemonic = await ethers.Wallet.createRandom().mnemonic?.phrase;
-// const wallet = await ethers.Wallet.fromPhrase(mnemonic!);
-
-
-// export async function encryptMnemonicEthers(mnemonic : Mnemonic, password : string) {
-//     const wallet = HDNodeWallet.fromMnemonic(mnemonic);
-//     const encryptedJson = await wallet.encrypt(password); // JSON string
-//     return encryptedJson;
-// }
-
-// export async function decryptMnemonicEthers(encryptedJson, password) {
-// 	// const wallet = await Wallet.fromEncryptedJson(encryptedJson, password);
-// 	const wallet = await HDNodeWallet.fromEncryptedJson(encryptedJson, password);
-// 	return wallet.mnemonic.phrase;
-// }
-
-const dbName = "CryptoWalletDB";
-const storeName = "wallets";
-
-const setupDB = async () => {
-    const db = await openDB(dbName, 1, {
-        upgrade(db) {
-            if (!db.objectStoreNames.contains(storeName)) {
-                db.createObjectStore(storeName, { keyPath: "name" }); // 🔹 Use name as the primary key
-            }
-        },
-    });
-    return db;
-}
-
-const storeWallet = async (name : string, encryptedData : string) => {
-	const db = await setupDB();
-	await db.put(storeName, { name, data: encryptedData }); // 🔹 Store using name as key
-	console.log(`Wallet "${name}" stored successfully!`);
-}
-
-const getAllWallets = async () => {
-	const db = await setupDB();
-	return await db.getAll(storeName);
-}
+// use ReactPortal instead of Modal or in addition to it
+// add /wallet to protected routes
 
 
-// export const encryptMnemonicHD = async (mnemonic : Mnemonic, password : string) => {
-export const encryptMnemonicHD = async (HDNodeWallet : HDNodeWallet, password : string) => {
-	// const hdWallet = HDNodeWallet.fromMnemonic(mnemonic);
-	const wallet = new Wallet(HDNodeWallet.privateKey); // Convert to Wallet
-	const res = await wallet.encrypt(password); // Encrypt and return JSON
-	return res;
-}
 
-export const decryptMnemonicHD = async (encryptedJson : string, password : string) => {
-	const wallet = await Wallet.fromEncryptedJson(encryptedJson, password);
-	// return wallet.mnemonic.phrase; // Returns mnemonic
-	return wallet; // Returns mnemonic
-}
+const mnemonicLength = [12, 18, 24];
 
-const checkMnemonicForErrors = (arr: IMnemonicPhraseInput[]) => {
-	let errors = false;
-	arr.forEach((p: IMnemonicPhraseInput) => {
-		if (!wordlists.english.includes(p.value)) {
-			errors = true;
-		}
-	});
-	return errors;
-};
-
-const createMnemonicFromInput = (arr: IMnemonicPhraseInput[]) => {
-	return arr.map((p: IMnemonicPhraseInput) => p.value).join(" ");
-};
-
-const getWalletWithMnemonic = (
-	mnemonic: string
-): { wallet: HDNodeWallet | null; error: string | null } => {
-
-	try {
-		const mnemonicPhrase = ethers.Mnemonic.fromPhrase(mnemonic);
-		const wallet = ethers.HDNodeWallet.fromMnemonic(mnemonicPhrase);
-		return { wallet, error: null };
-
-	} catch (error) {
-		if (error instanceof Error) {
-			return { wallet: null, error: error.message };
-		} else {
-			return { wallet: null, error: `${error}` };
-		} 
-	}
-};
-
-const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
+const WalletHeading = () => {
 	const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
-	const [isPasswordModalOpen, setIsPasswordModalOpen] = useState<boolean>(false);
-	const indexDBPassword = useRef<string>('');
+	const [isPasswordModalOpen, setIsPasswordModalOpen] =
+		useState<boolean>(false);
+	const indexDBPassword = useRef<string>("");
+	const [walletPassword, setWalletPassword] = useState<string>("");
 	const [HDWallet, setHDWallet] = useState<HDNodeWallet | null>(null);
+	const [walletsDropdownIsOpen, setWalletsDropdownIsOpen] =
+		useState<boolean>(false);
+	const [wallets, setWallets] = useState<IIndexedDBRecord[]>([]);
+	const [mnemonicLengthValue, setMnemonicLengthValue] = useState<number>(12);
+	const [mnemonicLengthDropdownIsOpen, setMnemonicLengthDropdownIsOpen] =
+		useState<boolean>(false);
 	const [mnemonicPhraseInput, setMnemonicPhraseInput] = useState<
 		IMnemonicPhraseInput[]
-	>(new Array(12).fill({ isVisible: true, value: "" }));
+	>(new Array(mnemonicLengthValue).fill({ isVisible: true, value: "" }));
 	const [error, setError] = useState<string>("");
 
 	const onAddClick = () => {
 		setIsPasswordModalOpen(true);
 	};
 
-	const onPasswordSubmit = (password: string) => {
+	const onPasswordSubmit = async (password: string) => {
 		indexDBPassword.current = password;
-		setIsAddModalOpen(true)
-		setIsPasswordModalOpen(false)
-	}
+		// check password
+		if (wallets.length === 0) {
+			setWalletPassword(password);
+			setIsAddModalOpen(true);
+			setIsPasswordModalOpen(false);
+		}
+		if (wallets.length > 0) {
+			const { wallet, error: passError } = await decryptMnemonicHD(
+				wallets[0].data,
+				password
+			);
+			if (!passError) {
+				setWalletPassword(password);
+				setIsAddModalOpen(true);
+				setIsPasswordModalOpen(false);
+			}
+			// ask about error messages, where to get them from?
+			else setError("Error: Incorrect password");
+		}
+	};
+
+	const onWalletPasswordSubmit = async (password: string) => {
+		indexDBPassword.current = password;
+		console.log(password);
+		console.log(wallets);
+		const { wallet, error: passError } = await decryptMnemonicHD(
+			wallets[0].data,
+			password
+		);
+		// check for errors and close mnemonic input and reset it
+		console.log(wallet);
+		console.log(passError);
+		// sets password and closes the window
+		if (!passError) setWalletPassword(password);
+		// ask about error messages, where to get them from?
+		else setError("Error: Incorrect password");
+	};
 
 	const onMnemonicSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -141,37 +114,46 @@ const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 			if (error) setError(error);
 			else {
 				// save to index.db and hash/encrypt it with password
-					// check if there is encrypted storage with password that
-					// if not - create one 
-					// else - add to existing
 				// reset inputs
 				setHDWallet(wallet);
-
+				setIsAddModalOpen(false);
+				setMnemonicPhraseInput(
+					new Array(mnemonicLengthValue).fill({ isVisible: true, value: "" })
+				);
 				console.log(wallet);
 				console.log("saved");
-				console.log(indexDBPassword.current)
+				console.log(indexDBPassword.current);
 			}
 		}
 	};
 
-	const [isAdded, setIsAdded] = useState<boolean>(false)
+	const onMnemonicLengthDropdown = (value: number) => {
+		setMnemonicLengthValue(value);
+		setMnemonicLengthDropdownIsOpen(false);
+	};
+
+	const [isAdded, setIsAdded] = useState<boolean>(false);
 	useEffect(() => {
 		// triggering work of async functions after
-		const encryptAndStore = async (HDWallet : HDNodeWallet, password : string) => {
+		const encryptAndStore = async (
+			HDWallet: HDNodeWallet,
+			password: string
+		) => {
 			const encryptedMnemonic = await encryptMnemonicHD(HDWallet, password);
 			console.log(encryptedMnemonic);
 			// add to indexedDB
 			//
-			await storeWallet("first Wallet", encryptedMnemonic)
+			if (encryptedMnemonic)
+				await storeWallet(`Mnemonic ${wallets.length + 1}`, encryptedMnemonic);
 			// temporary to see retrieved wallets
-			setIsAdded(prev => !prev);
+			// find a way how to trigger re-render without new useless state
+			setIsAdded((prev) => !prev);
 		};
 
 		if (HDWallet) {
-			encryptAndStore(HDWallet, indexDBPassword.current)
+			encryptAndStore(HDWallet, indexDBPassword.current);
 		}
-	}, [HDWallet])
-
+	}, [HDWallet]);
 
 	// remove
 	useEffect(() => {
@@ -180,18 +162,84 @@ const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 
 	useEffect(() => {
 		(async () => {
-			const wallets = await getAllWallets()
-			console.log(wallets)
-		 })();
-	}, [isAdded])
+			const wallets = await getAllWallets();
+			setWallets(
+				wallets.map((w) => {
+					return { ...w, isIconClicked: false };
+				})
+			);
+			console.log(wallets);
+		})();
+	}, [isAdded]);
 
+	useEffect(() => {
+		setMnemonicPhraseInput(
+			new Array(mnemonicLengthValue).fill({ isVisible: true, value: "" })
+		);
+	}, [mnemonicLengthValue]);
+
+	const toggleSettings = (id: string) => wallets.map((item: IIndexedDBRecord) =>
+		item.id === id
+			? { ...item, isIconClicked: !item.isIconClicked }
+			: { ...item, isIconClicked: false }
+	);
+
+	const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
+		e.stopPropagation();
+		console.log("clicked delete");
+		deleteWallet(id)
+		setWallets(toggleSettings(id))
+	};
+
+	const onRenameClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.stopPropagation();
+		console.log("clicked rename");
+	};
+
+	const onSettingsIconClick = (
+		e: React.MouseEvent<HTMLButtonElement>,
+		id: string
+	) => {
+		e.stopPropagation();
+		console.log("click icon");
+		const openCloseSettings = toggleSettings(id)
+		setWallets(openCloseSettings);
+	};
+
+	const onRowClick = (e: React.MouseEvent<HTMLDivElement>) => {
+		e.stopPropagation();
+		console.log("settings click");
+	};
+
+	if (!walletPassword && wallets.length > 0)
+		return (
+			<PasswordForm
+				onPasswordSubmit={onWalletPasswordSubmit}
+				error={error}
+				setPasswordError={setError}
+			/>
+		);
 	return (
 		<div className="w-full">
-			{wallets ? (
-				<CustomDropdown text="mnemonic 1">
-					<div className="p-2">
-						{wallets.map((w) => (
-							<p key={w}>{w}</p>
+			{wallets.length > 0 ? (
+				// use selected mnemonic name as text
+				<CustomDropdown
+					text="mnemonic 1"
+					isOpen={walletsDropdownIsOpen}
+					onClick={() => setWalletsDropdownIsOpen((prev) => !prev)}
+				>
+					<div>
+						{wallets.map((w, i) => (
+							<MnemonicRow
+								onDeleteClick={onDeleteClick}
+								onRenameClick={onRenameClick}
+								onRowClick={onRowClick}
+								onSettingsClick={onSettingsIconClick}
+								isSettingsClicked={w.isIconClicked}
+								name={w.name}
+								mnemonicId={w.id}
+								key={i}
+							/>
 						))}
 						<hr className="my-2 border-background-border" />
 						<AddWallet
@@ -213,6 +261,25 @@ const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 						Your Mnemoic key. It will be encrypted with your password and
 						storred in your Session DB
 					</p>
+					<p>Choose how many words does your mnemonic have:</p>
+					<CustomDropdown
+						isOpen={mnemonicLengthDropdownIsOpen}
+						onClick={() => setMnemonicLengthDropdownIsOpen((prev) => !prev)}
+						text={`${mnemonicLengthValue}`}
+						className="z-10"
+					>
+						<div className="p-2 bg-background-main">
+							{mnemonicLength.map((i: number) => (
+								<p
+									className="cursor-pointer"
+									key={i}
+									onClick={() => onMnemonicLengthDropdown(i)}
+								>
+									{i}
+								</p>
+							))}
+						</div>
+					</CustomDropdown>
 					<MnemonicInput
 						arr={mnemonicPhraseInput}
 						onChange={setMnemonicPhraseInput}
@@ -223,8 +290,16 @@ const WalletHeading: React.FC<IWalletHeading> = ({ wallets }) => {
 				</Modal>
 			)}
 			{isPasswordModalOpen && (
-				<Modal isModalOpen={isPasswordModalOpen} onCloseClick={setIsPasswordModalOpen} >
-					<PasswordForm text="Attention" onPasswordSubmit={onPasswordSubmit} />
+				<Modal
+					isModalOpen={isPasswordModalOpen}
+					onCloseClick={setIsPasswordModalOpen}
+				>
+					<PasswordForm
+						text="Attention"
+						onPasswordSubmit={onPasswordSubmit}
+						error={error}
+						setPasswordError={setError}
+					/>
 				</Modal>
 			)}
 		</div>

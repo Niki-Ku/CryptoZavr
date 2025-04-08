@@ -64,3 +64,10 @@ export interface IMnemonicPhraseInput {
 	isVisible: boolean;
 	value: string;
 }
+
+export interface IIndexedDBRecord {
+	name: string;
+	data: string;
+	isIconClicked: boolean;
+	id: string;
+}
