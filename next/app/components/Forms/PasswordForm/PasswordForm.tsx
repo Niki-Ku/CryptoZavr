@@ -3,7 +3,7 @@ import CustomButton from "../../ui/CustomButton/CustomButton";
 import Image from "next/image";
 import hidePassImg from "@/public/icons/another/hidePass.svg";
 import showPassImg from "@/public/icons/another/showPass.svg";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { schemaPassword } from "@/schemas/schemas";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,9 +11,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const PasswordForm = ({
 	text,
 	onPasswordSubmit,
+	error,
+	setPasswordError,
 }: {
 	text?: string;
 	onPasswordSubmit: (password: string) => void;
+	error?: string;
+	setPasswordError?: React.Dispatch<SetStateAction<string>>;
 }) => {
 	const [isVisiblePass, setIsViisiblePass] = useState<boolean>(false);
 	const {
@@ -28,7 +32,11 @@ const PasswordForm = ({
 	});
 
 	const onSubmit: SubmitHandler<{ password: string }> = (data) => {
-    onPasswordSubmit(data.password)
+		onPasswordSubmit(data.password);
+	};
+
+	const resetError = () => {
+		if (error && setPasswordError) setPasswordError("");
 	};
 
 	return (
@@ -41,6 +49,7 @@ const PasswordForm = ({
 				<CustomInput
 					{...register("password")}
 					type={isVisiblePass ? "text" : "password"}
+					onChange={resetError}
 					onIconClick={() => setIsViisiblePass((prev) => !prev)}
 					placeholder="Index DB password"
 					icon={
@@ -54,6 +63,7 @@ const PasswordForm = ({
 				{errors && (
 					<p className="text-red-500 font-sm">{errors.password?.message}</p>
 				)}
+				{error && <p className="text-red-500 font-sm">{error}</p>}
 				<CustomButton type="submit" className="w-full mt-4">
 					Next
 				</CustomButton>
