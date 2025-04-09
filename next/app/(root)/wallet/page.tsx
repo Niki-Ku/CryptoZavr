@@ -56,7 +56,7 @@ const WalletPage = async () => {
       <div className="mx-auto mt-10 w-[90%] md:w-[60%] bg-background-component p-4 rounded-md">
         <WalletHeading />
         <div>
-          {networks.map((n: INetwork, i: number) => (
+          {/* {networks.map((n: INetwork, i: number) => (
             <CryptoAssetsRow
               key={i}
               iconUrl={"https://coin-images.coingecko.com/coins/images/31069/small/worldcoin.jpeg?1696529903"}
@@ -67,7 +67,7 @@ const WalletPage = async () => {
               address={wallet.publicKey}
               price={88}
             />
-          ))}
+          ))} */}
         </div>
       </div>
     </div>

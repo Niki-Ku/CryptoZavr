@@ -3,7 +3,7 @@ interface IMnemonicRow {
 	name: string;
 	isSettingsClicked: boolean;
 	onDeleteClick: (e:React.MouseEvent<HTMLButtonElement>, name:string) => void;
-	onRenameClick: (e:React.MouseEvent<HTMLButtonElement>) => void;
+	onRenameClick: (e:React.MouseEvent<HTMLButtonElement>, id:string) => void;
   onSettingsClick: (e: React.MouseEvent<HTMLButtonElement>, name: string) => void;
   mnemonicId: string;
 }
@@ -33,7 +33,7 @@ const MnemonicRow: React.FC<IMnemonicRow> = ({
 			{isSettingsClicked && (
 				<div className="absolute right-2 top-8 bg-background-main flex flex-col z-20 rounded p-1">
 					<button onClick={(e) => onDeleteClick(e, mnemonicId)}>Delete wallet</button>
-					<button onClick={onRenameClick}>Rename wallet</button>
+					<button onClick={(e) => onRenameClick(e, mnemonicId)}>Rename wallet</button>
 				</div>
 			)}
 		</div>
