@@ -1,19 +1,28 @@
-"use client";
-import { useState } from "react";
-
 interface ICustomDropdown {
 	text: string;
 	children: React.ReactNode;
+	className?: string;
+	isOpen: boolean;
+	onClick: () => void;
 }
 
-const CustomDropdown: React.FC<ICustomDropdown> = ({ children, text }) => {
-	const [isOpen, setIsOpen] = useState<boolean>(false);
+// add arrow down icon here
+
+const CustomDropdown: React.FC<ICustomDropdown> = ({
+	children,
+	text,
+	className,
+	isOpen,
+	onClick,
+}) => {
 	return (
-		<div className="bg-background-border rounded-md p-[0.75px] relative">
+		<div
+			className={`bg-background-border rounded-md p-[0.75px] relative ${className}`}
+		>
 			<div className="bg-background-component rounded-md p-2 ">
 				<button
 					aria-expanded={isOpen}
-					onClick={() => setIsOpen((prev) => !prev)}
+					onClick={onClick}
 					type="button"
 					className="w-full flex justify-between"
 				>

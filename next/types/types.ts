@@ -38,8 +38,8 @@ export interface ITextChildren {
 }
 
 export interface INetwork {
-  id: string;
-  name: string;
+  networkId: string;
+  networkName: string;
   rpcUrl: string;
   coingeckoId: string;
 }
@@ -51,14 +51,23 @@ export interface IWallet {
 }
 
 export interface ICoingeckoCoinResponse {
-  image: {
-    large: string;
-    small: string;
-    thumb: string;
-  }
-  market_data: {
-    current_price: {
-      usd: number;
-    }
-  }
+  image: string;
+  name: string;
+  symbol: string;
+  id: string;
+  current_price: number;
+}
+
+export type INetworkAndGeckoResponse = INetwork & Partial<ICoingeckoCoinResponse>;
+
+export interface IMnemonicPhraseInput {
+	isVisible: boolean;
+	value: string;
+}
+
+export interface IIndexedDBRecord {
+	name: string;
+	data: string;
+	isIconClicked: boolean;
+	id: string;
 }
