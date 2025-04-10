@@ -7,7 +7,7 @@ import Modal from "../../ui/Modal/Modal";
 import PasswordForm from "../../Forms/PasswordForm/PasswordForm";
 import MnemonicRow from "../../ui/MnemonicRow/MnemonicRow";
 import { HDNodeWallet } from "ethers";
-import { use, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { IMnemonicPhraseInput, IIndexedDBRecord, IWallet } from "@/types/types";
 import {
 	storeWallet,
@@ -21,33 +21,29 @@ import {
 	getWalletWithMnemonic,
 	encryptMnemonicHD,
 	decryptMnemonicHD,
+	createMnemonic,
+	createWalletFromMnemonic
 } from "@/utils/ethersUtils";
 import CustomInput from "../../ui/CustomInput/CustomInput";
 import CustomButton from "../../ui/CustomButton/CustomButton";
 
-// give the ability to change mnemonic name to user
-// make create wallet button functional
-// make UI
-// asking for a password
-// check if passwords matches with other if password was already set
-// showing user input with phrase with a copy button and notification
-// adding to the indexedDB
 
 // use ReactPortal instead of Modal or in addition to it
 // add /wallet to protected routes
 // if user forget his password - give him ability to reset all wallets
 // change names of the variables and functions/handlers
+// code refactoring/optimisation
+// upgrade design and update for mobile
 
 
-// open modal/portal
-// use empty input field with button to submit
-// optionally, limit input length to 64 chars
-// onSubmit update wallets record in db
+
+
 
 const mnemonicLength = [12, 18, 24];
 
 const WalletHeading = () => {
 	const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
+	const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
 	const [isPasswordModalOpen, setIsPasswordModalOpen] =
 		useState<boolean>(false);
 	const indexDBPassword = useRef<string>("");
@@ -66,18 +62,42 @@ const WalletHeading = () => {
 	const [renameModalIsOpen, setReanmeModalIsOpen] = useState<boolean>(false);
 	const renameWalletId = useRef<string>('');
 	const [newNameWallet, setNewNameWallet] = useState<string>('');
+	const isCreatingWallet = useRef<boolean>(false);
+	const [mnemonic, setMnemonic] = useState<string>();
 
-	const onAddClick = () => {
+	const onAddWallet = () => {
 		setIsPasswordModalOpen(true);
 	};
+
+	const onCreateWallet = () => {
+		isCreatingWallet.current = true;
+		setIsPasswordModalOpen(true);
+	}
+
+	const setupMnemonic = () => {
+		setMnemonic(createMnemonic());
+		setIsCreateModalOpen(true);
+	}
+
+	const createWallet = () => {
+		if (!mnemonic) {
+			setError("Error: mnemonic is not found")
+			return
+		}
+		setHDWallet(createWalletFromMnemonic(mnemonic));
+		setIsCreateModalOpen(false);
+	}
 
 	const onPasswordSubmit = async (password: string) => {
 		indexDBPassword.current = password;
 		// check password
 		if (wallets.length === 0) {
 			setWalletPassword(password);
-			setIsAddModalOpen(true);
 			setIsPasswordModalOpen(false);
+			isCreatingWallet.current
+				// and here also
+			? setupMnemonic()
+			: setIsAddModalOpen(true);
 		}
 		if (wallets.length > 0) {
 			const { wallet, error: passError } = await decryptMnemonicHD(
@@ -86,8 +106,11 @@ const WalletHeading = () => {
 			);
 			if (!passError) {
 				setWalletPassword(password);
-				setIsAddModalOpen(true);
 				setIsPasswordModalOpen(false);
+				// change setIsCreateModalOpen to another function
+				isCreatingWallet.current
+				? setupMnemonic()
+				: setIsAddModalOpen(true);
 			}
 			// ask about error messages, where to get them from?
 			else setError("Error: Incorrect password");
@@ -234,6 +257,7 @@ const WalletHeading = () => {
 				setPasswordError={setError}
 			/>
 		);
+
 	return (
 		<div className="w-full">
 			{wallets.length > 0 ? (
@@ -258,15 +282,15 @@ const WalletHeading = () => {
 						))}
 						<hr className="my-2 border-background-border" />
 						<AddWallet
-							onAddClick={onAddClick}
-							onCreateClick={() => console.log("create")}
+							onAddClick={onAddWallet}
+							onCreateClick={onCreateWallet}
 						/>
 					</div>
 				</CustomDropdown>
 			) : (
 				<AddWallet
-					onAddClick={onAddClick}
-					onCreateClick={() => console.log("create")}
+					onAddClick={onAddWallet}
+					onCreateClick={onCreateWallet}
 				/>
 			)}
 			{isAddModalOpen && (
@@ -327,6 +351,16 @@ const WalletHeading = () => {
 						<CustomInput className="my-2" value={newNameWallet} onChange={(e) => setNewNameWallet(e.target.value)} />
 						<CustomButton value="Rename" type="submit" className="w-full">Rename</CustomButton>
 					</form>
+				</Modal>
+			)}
+			{isCreateModalOpen && (
+				<Modal isModalOpen={isCreateModalOpen} onCloseClick={setIsCreateModalOpen}>
+					<div>
+						<p>This is your mnemonic key. Save it secure and don&apos;t share it</p>
+						<textarea readOnly value={mnemonic} className="w-full h-20 resize-none p-2 rounded bg-transp-three focus-visible:outline-0" ></textarea>
+						{error && <span className="text-red-500">{error}</span>}
+						<CustomButton onClick={createWallet} className="w-full">Create Wallet</CustomButton>
+					</div>
 				</Modal>
 			)}
 		</div>
