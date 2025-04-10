@@ -7,12 +7,13 @@ import Modal from "../../ui/Modal/Modal";
 import PasswordForm from "../../Forms/PasswordForm/PasswordForm";
 import MnemonicRow from "../../ui/MnemonicRow/MnemonicRow";
 import { HDNodeWallet } from "ethers";
-import { useEffect, useRef, useState } from "react";
-import { IMnemonicPhraseInput, IIndexedDBRecord } from "@/types/types";
+import { use, useCallback, useEffect, useRef, useState } from "react";
+import { IMnemonicPhraseInput, IIndexedDBRecord, IWallet } from "@/types/types";
 import {
 	storeWallet,
 	getAllWallets,
 	deleteWallet,
+	renameWallet,
 } from "@/utils/indexedDBUtils";
 import {
 	checkMnemonicForErrors,
@@ -21,6 +22,8 @@ import {
 	encryptMnemonicHD,
 	decryptMnemonicHD,
 } from "@/utils/ethersUtils";
+import CustomInput from "../../ui/CustomInput/CustomInput";
+import CustomButton from "../../ui/CustomButton/CustomButton";
 
 // give the ability to change mnemonic name to user
 // make create wallet button functional
@@ -32,8 +35,14 @@ import {
 
 // use ReactPortal instead of Modal or in addition to it
 // add /wallet to protected routes
+// if user forget his password - give him ability to reset all wallets
+// change names of the variables and functions/handlers
 
 
+// open modal/portal
+// use empty input field with button to submit
+// optionally, limit input length to 64 chars
+// onSubmit update wallets record in db
 
 const mnemonicLength = [12, 18, 24];
 
@@ -54,6 +63,9 @@ const WalletHeading = () => {
 		IMnemonicPhraseInput[]
 	>(new Array(mnemonicLengthValue).fill({ isVisible: true, value: "" }));
 	const [error, setError] = useState<string>("");
+	const [renameModalIsOpen, setReanmeModalIsOpen] = useState<boolean>(false);
+	const renameWalletId = useRef<string>('');
+	const [newNameWallet, setNewNameWallet] = useState<string>('');
 
 	const onAddClick = () => {
 		setIsPasswordModalOpen(true);
@@ -155,61 +167,64 @@ const WalletHeading = () => {
 		}
 	}, [HDWallet]);
 
-	// remove
-	useEffect(() => {
-		console.log(mnemonicPhraseInput);
-	}, [mnemonicPhraseInput]);
-
-	useEffect(() => {
-		(async () => {
-			const wallets = await getAllWallets();
-			setWallets(
-				wallets.map((w) => {
-					return { ...w, isIconClicked: false };
-				})
-			);
-			console.log(wallets);
-		})();
-	}, [isAdded]);
-
 	useEffect(() => {
 		setMnemonicPhraseInput(
 			new Array(mnemonicLengthValue).fill({ isVisible: true, value: "" })
 		);
 	}, [mnemonicLengthValue]);
 
-	const toggleSettings = (id: string) => wallets.map((item: IIndexedDBRecord) =>
+	const refreshWallets = async () => {
+		const wallets = await getAllWallets() || [];
+		setWallets(
+			wallets.map((w) => {
+				return { ...w, isIconClicked: false };
+			})
+		);
+	};
+
+	const toggleSettings = useCallback((id: string) => wallets.map((item: IIndexedDBRecord) =>
 		item.id === id
 			? { ...item, isIconClicked: !item.isIconClicked }
 			: { ...item, isIconClicked: false }
-	);
+	), [wallets]);
 
-	const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
+	const onDeleteClick = useCallback(async(e: React.MouseEvent<HTMLButtonElement>, id: string) => {
 		e.stopPropagation();
-		console.log("clicked delete");
-		deleteWallet(id)
-		setWallets(toggleSettings(id))
-	};
+		deleteWallet(id);
+		setWallets(toggleSettings(id));
+		await refreshWallets()
+	}, [toggleSettings]);
 
-	const onRenameClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+
+	const onRenameClick = useCallback((e: React.MouseEvent<HTMLButtonElement>, id: string) => {
 		e.stopPropagation();
-		console.log("clicked rename");
-	};
+		setReanmeModalIsOpen(true);
+		renameWalletId.current = id;
+	}, []);
+
+	const onRenameSubmit = useCallback(async (e: React.FormEvent, id: string, name: string) => {
+		e.preventDefault();
+		await renameWallet(id, name)
+		setReanmeModalIsOpen(false);
+		await refreshWallets()
+	}, []);
 
 	const onSettingsIconClick = (
 		e: React.MouseEvent<HTMLButtonElement>,
 		id: string
 	) => {
 		e.stopPropagation();
-		console.log("click icon");
-		const openCloseSettings = toggleSettings(id)
-		setWallets(openCloseSettings);
+		setWallets(toggleSettings(id));
 	};
 
 	const onRowClick = (e: React.MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
 		console.log("settings click");
 	};
+
+	useEffect(() => {	
+		refreshWallets()
+	}, [isAdded]);
 
 	if (!walletPassword && wallets.length > 0)
 		return (
@@ -300,6 +315,18 @@ const WalletHeading = () => {
 						error={error}
 						setPasswordError={setError}
 					/>
+				</Modal>
+			)}
+			{renameModalIsOpen && (
+				<Modal
+					isModalOpen={renameModalIsOpen}
+					onCloseClick={setReanmeModalIsOpen}
+				>
+					<form onSubmit={(e) => onRenameSubmit(e, renameWalletId.current, newNameWallet)}>
+						<p className="text-xl">Set new name for your wallet:</p>
+						<CustomInput className="my-2" value={newNameWallet} onChange={(e) => setNewNameWallet(e.target.value)} />
+						<CustomButton value="Rename" type="submit" className="w-full">Rename</CustomButton>
+					</form>
 				</Modal>
 			)}
 		</div>
