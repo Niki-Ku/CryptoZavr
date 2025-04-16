@@ -57,3 +57,7 @@ export const getWalletWithMnemonic = (
 		}
 	}
 };
+
+export const createMnemonic = () => ethers.Wallet.createRandom().mnemonic?.phrase;
+
+export const createWalletFromMnemonic = (mnemonic: string) =>  ethers.Wallet.fromPhrase(mnemonic);
