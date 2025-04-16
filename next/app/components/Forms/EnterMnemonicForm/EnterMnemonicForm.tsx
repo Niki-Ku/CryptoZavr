@@ -5,7 +5,7 @@ import Image from "next/image";
 import { IMnemonicPhraseInput } from "@/types/types";
 import CustomButton from "../../ui/CustomButton/CustomButton";
 
-interface IMnemonicInput {
+export interface EnterMnemonicFormProps {
 	arr: IMnemonicPhraseInput[];
 	onChange: React.Dispatch<React.SetStateAction<IMnemonicPhraseInput[]>>;
 	onMnemonicSubmit: (e:React.FormEvent) => void;
@@ -14,7 +14,7 @@ interface IMnemonicInput {
 }
 
 // make mobile version
-const MnemonicInput: React.FC<IMnemonicInput> = ({ arr, onChange, onMnemonicSubmit, error, setError }) => {
+const EnterMnemonicForm: React.FC<EnterMnemonicFormProps> = ({ arr, onChange, onMnemonicSubmit, error, setError }) => {
 	const inputChange = (e: React.ChangeEvent<HTMLInputElement>, i: number) => {
 		const mutateArr = arr.map((item: IMnemonicPhraseInput, index: number) =>
 			index === i ? { ...item, value: e.target.value.trim() } : item
@@ -70,4 +70,4 @@ const MnemonicInput: React.FC<IMnemonicInput> = ({ arr, onChange, onMnemonicSubm
 	);
 };
 
-export default MnemonicInput;
+export default EnterMnemonicForm;

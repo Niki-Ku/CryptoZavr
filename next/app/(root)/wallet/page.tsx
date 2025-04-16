@@ -5,16 +5,14 @@ import WalletHeading from "@/app/components/layout/WalletHeading/WalletHeading";
 import CryptoAssetsRow from "@/app/components/ui/CryptoAssetsRow/CryptoAssetsRow";
 import { networks } from "@/config/cryptoNetworks";
 import { IIndexedDBRecord, IMnemonicPhraseInput, INetwork } from "@/types/types";
-
-import MnemonicInput from "@/app/components/layout/MnemonicInput/MnemonicInput";
 import Modal from "@/app/components/ui/Modal/Modal";
-import CustomButton from "@/app/components/ui/CustomButton/CustomButton";
-import CustomInput from "@/app/components/ui/CustomInput/CustomInput";
 import { useCallback, useEffect, useRef, useState } from "react";
-import CustomDropdown from "@/app/components/ui/CustomDropdown/CustomDropdown";
 import { checkMnemonicForErrors, createMnemonic, createMnemonicFromInput, createWalletFromMnemonic, decryptMnemonicHD, encryptMnemonicHD, getWalletWithMnemonic } from "@/utils/ethersUtils";
 import { deleteWallet, getAllWallets, renameWallet, storeWallet } from "@/utils/indexedDBUtils";
 import PasswordForm from "@/app/components/Forms/PasswordForm/PasswordForm";
+import CreateWalletForm from "@/app/components/Forms/CreateWalletForm/CreateWalletForm";
+import RenameWalletForm from "@/app/components/Forms/RenameWalletForm/RenameWalletForm";
+import EnterMnemonicModal from "@/app/components/Modals/EnterMnemonicModal/EnterMnemonicModal";
 
 const alchemyKey = process.env.ALCHEMY_SECRET_KEY;
 
@@ -22,17 +20,13 @@ const BnbTestProvider = new JsonRpcProvider(
 	`https://bnb-testnet.g.alchemy.com/v2/${alchemyKey}`
 );
 
-const mnemonicLength = [12, 18, 24];
-
-// showing user input with phrase with a copy button and notification
-
+// add copy button to mnemonic textarea
 // add /wallet to protected routes
 // if user forget his password - give him ability to reset all wallets
 // change names of the variables and functions/handlers
 // code refactoring/optimisation
 // upgrade design and update for mobile
-
-// optionally, limit input length to 64 chars
+// optionally, limit input length when renaming wallet to 64 chars
 
 const WalletPage = () => {
 	const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
@@ -42,22 +36,19 @@ const WalletPage = () => {
 	const [mnemonicLengthDropdownIsOpen, setMnemonicLengthDropdownIsOpen] =
 		useState<boolean>(false);
 	const [renameModalIsOpen, setReanmeModalIsOpen] = useState<boolean>(false);
-	const [newNameWallet, setNewNameWallet] = useState<string>("");
+	const [walletNewName, setWalletNewName] = useState<string>("");
 	const [mnemonicLengthValue, setMnemonicLengthValue] = useState<number>(12);
 	const [mnemonicPhraseInput, setMnemonicPhraseInput] = useState<
 		IMnemonicPhraseInput[]
 	>(new Array(mnemonicLengthValue).fill({ isVisible: true, value: "" }));
 	const isCreatingWallet = useRef<boolean>(false);
-  const [mnemonic, setMnemonic] = useState<string>();
-  
+  const [mnemonic, setMnemonic] = useState<string>("");
   const indexDBPassword = useRef<string>("");
 	const [walletPassword, setWalletPassword] = useState<string>("");
 	const [HDWallet, setHDWallet] = useState<HDNodeWallet | null>(null);
 	const [walletsDropdownIsOpen, setWalletsDropdownIsOpen] =
 		useState<boolean>(false);
 	const [wallets, setWallets] = useState<IIndexedDBRecord[]>([]);
-
-
 	const [error, setError] = useState<string>("");
 	const renameWalletId = useRef<string>('');
 
@@ -71,11 +62,12 @@ const WalletPage = () => {
 	};
 
 	const setupMnemonic = () => {
-		setMnemonic(createMnemonic());
+		setMnemonic(createMnemonic() || "");
 		setIsCreateModalOpen(true);
 	};
 
-	const createWallet = () => {
+  const createWallet = (e: React.FormEvent) => {
+    e.preventDefault();
 		if (!mnemonic) {
 			setError("Error: mnemonic is not found");
 			return;
@@ -238,7 +230,11 @@ const WalletPage = () => {
 	) => {
 		e.stopPropagation();
 		setWallets(toggleSettings(id));
-	};
+  };
+  
+  const onWalletNewNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWalletNewName(e.target.value);
+  }
 
 	const onRowClick = (e: React.MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
@@ -288,41 +284,19 @@ const WalletPage = () => {
 				</div>
 			</div>
 
-			{isAddModalOpen && (
-				<Modal isModalOpen={isAddModalOpen} onCloseClick={setIsAddModalOpen}>
-					{/* move to separate form component*/}
-					<p>
-						Your Mnemoic key. It will be encrypted with your password and
-						storred in your Session DB
-					</p>
-					<p>Choose how many words does your mnemonic have:</p>
-					<CustomDropdown
-						isOpen={mnemonicLengthDropdownIsOpen}
-						onClick={() => setMnemonicLengthDropdownIsOpen((prev) => !prev)}
-						text={`${mnemonicLengthValue}`}
-						className="z-10"
-					>
-						<div className="p-2 bg-background-main">
-							{mnemonicLength.map((i: number) => (
-								<p
-									className="cursor-pointer"
-									key={i}
-									onClick={() => onMnemonicLengthDropdown(i)}
-								>
-									{i}
-								</p>
-							))}
-						</div>
-					</CustomDropdown>
-					<MnemonicInput
-						arr={mnemonicPhraseInput}
-						onChange={setMnemonicPhraseInput}
-						onMnemonicSubmit={onMnemonicSubmit}
-						error={error}
-						setError={setError}
-					/>
-				</Modal>
-      )}
+      <EnterMnemonicModal
+        mnemonicLengthDropdownIsOpen={mnemonicLengthDropdownIsOpen}
+        onDropdownClick={() => setMnemonicLengthDropdownIsOpen((prev) => !prev)}
+        dropdownText={`${mnemonicLengthValue}`}
+        onMnemonicLengthDropdowClick={onMnemonicLengthDropdown}
+        arr={mnemonicPhraseInput}
+        onChange={setMnemonicPhraseInput}
+        onMnemonicSubmit={onMnemonicSubmit}
+        error={error}
+        setError={setError}
+        isOpenModal={isAddModalOpen}
+        onCloseModal={setIsAddModalOpen}
+      />
       
 			{isPasswordModalOpen && (
 				<Modal
@@ -343,21 +317,12 @@ const WalletPage = () => {
 					isModalOpen={renameModalIsOpen}
 					onCloseClick={setReanmeModalIsOpen}
 				>
-					<form
-						onSubmit={(e) =>
-							onRenameSubmit(e, renameWalletId.current, newNameWallet)
-						}
-					>
-						<p className="text-xl">Set new name for your wallet:</p>
-						<CustomInput
-							className="my-2"
-							value={newNameWallet}
-							onChange={(e) => setNewNameWallet(e.target.value)}
-						/>
-						<CustomButton value="Rename" type="submit" className="w-full">
-							Rename
-						</CustomButton>
-					</form>
+          <RenameWalletForm
+            onSubmit={onRenameSubmit}
+            walletNewName={walletNewName}
+            onWalletNewNameChange={onWalletNewNameChange}
+            walletId={renameWalletId.current}
+          />
 				</Modal>
       )}
       
@@ -365,21 +330,12 @@ const WalletPage = () => {
 				<Modal
 					isModalOpen={isCreateModalOpen}
 					onCloseClick={setIsCreateModalOpen}
-				>
-					<div>
-						<p>
-							This is your mnemonic key. Save it secure and don&apos;t share it
-						</p>
-						<textarea
-							readOnly
-							value={mnemonic}
-							className="w-full h-20 resize-none p-2 rounded bg-transp-three focus-visible:outline-0"
-						></textarea>
-						{error && <span className="text-red-500">{error}</span>}
-						<CustomButton onClick={createWallet} className="w-full">
-							Create Wallet
-						</CustomButton>
-					</div>
+        >
+          <CreateWalletForm
+            mnemonic={mnemonic}
+            error={error}
+            onSubmit={createWallet}
+          />
 				</Modal>
 			)}
 		</div>
